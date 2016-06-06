@@ -19,6 +19,8 @@ You will need [Leiningen][] 2.0.0 or above installed.
 
 [leiningen]: https://github.com/technomancy/leiningen
 
+And Java8 JDK
+
 ## Running
 
 To start a local web server for the application, run:
