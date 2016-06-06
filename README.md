@@ -4,6 +4,13 @@ A rewrite of the rather verbose ruby version. found here:
 
 https://github.com/cmm0004/StockChecker/blob/master/lib/endpoints/jobluv.rb
 
+## Usage
+/jobluv @UserMentionName ++
+/jobluv @UserMentionName --
+
+in progress, counting keys:
+/jobluv @userMentionName ?
+
 ## Prerequisites
 
 You will need [Leiningen][] 2.0.0 or above installed.
