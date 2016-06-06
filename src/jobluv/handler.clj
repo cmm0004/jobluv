@@ -27,8 +27,8 @@
 		(case command
 			"++" (structure-response usermention (rand-nth (links/get_plus_jobluv_links)))
 			"--" (structure-response usermention (rand-nth (links/get_minus_jobluv_links)))
-			"?" (response ["i havent set up the db yet, sry"])
-			(response ["i need to know what you want"])
+			"?" (structure-response usermention "i havent set up the db yet, sry")
+			(structure-response usermention "i need to know what you want")
 		)
 	)
 )
