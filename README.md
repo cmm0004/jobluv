@@ -6,9 +6,11 @@ https://github.com/cmm0004/StockChecker/blob/master/lib/endpoints/jobluv.rb
 
 ## Usage
 /jobluv @UserMentionName ++
+
 /jobluv @UserMentionName --
 
 in progress, counting keys:
+
 /jobluv @userMentionName ?
 
 ## Prerequisites
