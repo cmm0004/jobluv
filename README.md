@@ -21,6 +21,8 @@ You will need [Leiningen][] 2.0.0 or above installed.
 
 And Java8 JDK
 
+And Clojure1.8
+
 ## Running
 
 To start a local web server for the application, run:
