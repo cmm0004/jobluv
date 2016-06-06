@@ -44,3 +44,7 @@
   (-> (handler/api app-routes)
    	  (wrap-json-body {:keywords? true})
       (wrap-json-response)))
+
+(defn -main []
+	(app)
+)

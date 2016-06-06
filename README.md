@@ -1,6 +1,9 @@
 # jobluv
+## GAZE UPON MY WORKS AND DESPAIR!
 
-FIXME
+A rewrite of the rather verbose ruby version. found here: 
+
+https://github.com/cmm0004/StockChecker/blob/master/lib/endpoints/jobluv.rb
 
 ## Prerequisites
 
@@ -10,10 +13,13 @@ You will need [Leiningen][] 2.0.0 or above installed.
 
 ## Running
 
-To start a web server for the application, run:
+To start a local web server for the application, run:
 
     lein ring server
+    or
+    lein ring server-headless
 
-## License
 
-Copyright © 2016 FIXME
+Doesnt have exception handling or db integration like the ruby version though. soon.
+
+
