@@ -1,4 +1,5 @@
 (ns jobluv.handler
+  (:gen-class)
   (:require [compojure.core :refer :all]
   			[clojure.string :as str]
   			[compojure.handler :as handler]

@@ -1,5 +1,4 @@
 # jobluv
-## GAZE UPON MY WORKS AND DESPAIR!
 
 A rewrite of the rather verbose ruby version. found here: 
 
