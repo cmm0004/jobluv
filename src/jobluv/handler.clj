@@ -1,4 +1,5 @@
 (ns jobluv.handler
+  (:gen-class)
   (:require [compojure.core :refer :all]
   			[clojure.string :as str]
   			[compojure.handler :as handler]
@@ -7,13 +8,15 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :refer [response]]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
-            [jobluv.links :as links]))
+            [ring.adapter.jetty :as jetty]
+            [jobluv.links :as links]
+            [environ.core :refer [env]]))
 
 (def db { 	:classname "org.postgresql.Driver"
 			:subprotocol "postgresql"
-          	:subname (System/getenv "PG_SUBNAME")
-            :user (System/getenv "PG_USER")
-            :password (System/getenv "PG_PASSWORD")})
+          	:subname (env :database-url)
+            :user (env :database-user)
+            :password (env :database-password)})
 
 
 (defn structure-response [usermention linkstring]
@@ -62,7 +65,10 @@
 )
 
 (defn build-key-string [jobluv_amount]
-	(format " is major %s" (str/join " " (repeat jobluv_amount "(key)")))
+	(if (= jobluv_amount nil)
+		(build-key-string 0)
+		(format " is major %s" (str/join " " (repeat jobluv_amount "(key)")))
+	)
 )
 
 (defn question [usermention]
@@ -75,7 +81,7 @@
 
 (defn add-user [usermention]
 	 (j/execute! db ["INSERT INTO jobluvs(hipchat_username, jobluv_amount, is_the_job_don) VALUES (?, 1, false);" usermention])		
-	 (structure-response usermention "You are now on the road to success, let's win more.")
+	 (structure-response usermention " You are now on the road to success, let's win more.")
 )
 
 (defn handle-hipchat-message [request]
@@ -84,7 +90,7 @@
 		usermention (get-in (first (get-in request [:body :item :message :mentions])) [:mention_name])
 		from (get-in (first (get-in request [:body :item :message :from])) [:mention_name])
 		]
-		(if (= (System/getenv "THEY") from)
+		(if (=  (env :they) (str/lower-case from))
 			(structure-response usermention "I don't listen to THEY")
 			(case command
 				"++" (plusplus usermention)
@@ -109,3 +115,6 @@
   (-> (handler/api app-routes)
    	  (wrap-json-body {:keywords? true})
       (wrap-json-response)))
+
+(defn -main [] 
+	jetty/run-jetty app)
