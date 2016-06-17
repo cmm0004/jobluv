@@ -1,5 +1,6 @@
 /target
 /lib
+/src/jobluv/config.clj
 /classes
 /checkouts
 pom.xml

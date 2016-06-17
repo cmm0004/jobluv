@@ -10,13 +10,16 @@
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.adapter.jetty :as jetty]
             [jobluv.links :as links]
-            [environ.core :refer [env]]))
+            [jobluv.config :as config]
+            [environ.core :refer [env]]
+            [org.httpkit.client :as http]
+  		  	[clojure.data.json :as json]))
 
 (def db { 	:classname "org.postgresql.Driver"
 			:subprotocol "postgresql"
-          	:subname (env :database-url)
-            :user (env :database-user)
-            :password (env :database-password)})
+          	:subname (config/env :database-url)
+            :user (config/env :database-user)
+            :password (config/env :database-password)})
 
 
 (defn structure-response [usermention linkstring]
@@ -29,6 +32,29 @@
  		}
  	)
 )
+
+(defn structure-tldr-response [keywords tldr]
+ 	(response 
+ 		{
+	 		:color "green"
+	 		:message (format "Keywords: %s                 TLDR:  %s " keywords tldr)
+	 		:notify false
+	 		:message_format "text"
+ 		}
+ 	)
+)
+
+(defn structure-error-response [message]
+ 	(response 
+ 		{
+	 		:color "red"
+	 		:message (format "I played myself.\n Error: %s" message)
+	 		:notify false
+	 		:message_format "text"
+ 		}
+ 	)
+)
+
 
 (defn query-jobluvs [usermention]
 	(get-in 
@@ -71,6 +97,18 @@
 	)
 )
 
+(defn arrange-tldr [body]
+	(let [
+		keywords (clojure.string/join ", " (get body "sm_api_keyword_array"))
+		content (get body "sm_api_content")
+		]
+	;(println body)
+	(structure-tldr-response keywords content)
+	)
+
+	
+)
+
 (defn question [usermention]
 	(structure-response usermention 
 						(build-key-string 
@@ -90,7 +128,7 @@
 		usermention (get-in (first (get-in request [:body :item :message :mentions])) [:mention_name])
 		from (get-in (first (get-in request [:body :item :message :from])) [:mention_name])
 		]
-		(if (=  (env :they) (str/lower-case from))
+		(if (=  (config/env :they) (str/lower-case from))
 			(structure-response usermention "I don't listen to THEY")
 			(case command
 				"++" (plusplus usermention)
@@ -103,12 +141,29 @@
 	)
 )
 
+(defn handle-tldr [request]
+	(let [
+		article (get-in request [:body :item :message :message])
+		]
+		(let [options {:form-params {:sm_api_input article }}
+      		{:keys [status body error]} @(http/post "http://api.smmry.com/?SM_API_KEY=2573B09504&SM_KEYWORD_COUNT=4" options)]
+		  (if error
+		    (structure-error-response error)
+		    (arrange-tldr (json/read-str body))	
+		  )
+		)
+	)
+)
+
 
 (defroutes app-routes
   (GET "/PING" [] "PONG")
   (POST "/" request 
   	(handle-hipchat-message request)
   )	
+  (POST "/tldr" request
+  	(handle-tldr request)
+  	)
   (route/not-found "Not Found"))
 
 (def app

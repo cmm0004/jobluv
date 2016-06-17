@@ -7,7 +7,9 @@
                  [ring/ring-defaults "0.1.5"]
                  [ring/ring-json "0.4.0"]
                  [org.clojure/java.jdbc "0.6.1"]
-                 [postgresql/postgresql "9.0-801.jdbc4"]]
+                 [postgresql/postgresql "9.0-801.jdbc4"]
+                 [http-kit "2.1.18"]
+                 [org.clojure/data.json "0.2.6"]]
   :plugins [[lein-ring "0.9.7"] 
             [lein-beanstalk "0.2.7"]]
   :ring {:handler jobluv.handler/app}
