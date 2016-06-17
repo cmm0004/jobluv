@@ -1,5 +1,4 @@
 (ns jobluv.handler
-  (:gen-class)
   (:require [compojure.core :refer :all]
   			[clojure.string :as str]
   			[compojure.handler :as handler]
@@ -8,7 +7,6 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :refer [response]]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
-            [ring.adapter.jetty :as jetty]
             [jobluv.links :as links]
             [jobluv.config :as config]
             [environ.core :refer [env]]
@@ -170,6 +168,3 @@
   (-> (handler/api app-routes)
    	  (wrap-json-body {:keywords? true})
       (wrap-json-response)))
-
-(defn -main [] 
-	jetty/run-jetty app)
