@@ -1,4 +1,4 @@
-(defproject jobluv "0.2.0-SNAPSHOT"
+(defproject jobluv "0.3.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
