@@ -1,19 +1,12 @@
-(ns jobluv.handler
-  (:gen-class)
-  (:require [compojure.core :refer :all]
+(ns jobluv.handlers.jobluv
+	(:require [compojure.core :refer :all]
   			[clojure.string :as str]
-  			[compojure.handler :as handler]
-            [compojure.route :as route]
-            [clojure.java.jdbc :as j]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.util.response :refer [response]]
-            [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
-            [ring.adapter.jetty :as jetty]
+            [clojure.java.jdbc :as j]      
+            [ring.util.response :refer [response]]            
             [jobluv.links :as links]
-            [jobluv.config :as config]
-            [environ.core :refer [env]]
-            [org.httpkit.client :as http]
-  		  	[clojure.data.json :as json]))
+            [jobluv.config :as config]          
+            )
+)
 
 (def db { 	:classname "org.postgresql.Driver"
 			:subprotocol "postgresql"
@@ -21,23 +14,11 @@
             :user (config/env :database-user)
             :password (config/env :database-password)})
 
-
 (defn structure-response [usermention linkstring]
  	(response 
  		{
 	 		:color "green"
 	 		:message (format "@%s %s" usermention linkstring)
-	 		:notify false
-	 		:message_format "text"
- 		}
- 	)
-)
-
-(defn structure-tldr-response [keywords tldr]
- 	(response 
- 		{
-	 		:color "green"
-	 		:message (format "Keywords: %s                 TLDR:  %s " keywords tldr)
 	 		:notify false
 	 		:message_format "text"
  		}
@@ -54,7 +35,6 @@
  		}
  	)
 )
-
 
 (defn query-jobluvs [usermention]
 	(get-in 
@@ -97,18 +77,6 @@
 	)
 )
 
-(defn arrange-tldr [body]
-	(let [
-		keywords (clojure.string/join ", " (get body "sm_api_keyword_array"))
-		content (get body "sm_api_content")
-		]
-	;(println body)
-	(structure-tldr-response keywords content)
-	)
-
-	
-)
-
 (defn question [usermention]
 	(structure-response usermention 
 						(build-key-string 
@@ -121,6 +89,7 @@
 	 (j/execute! db ["INSERT INTO jobluvs(hipchat_username, jobluv_amount, is_the_job_don) VALUES (?, 1, false);" usermention])		
 	 (structure-response usermention " You are now on the road to success, let's win more.")
 )
+
 
 (defn handle-hipchat-message [request]
 	(let [
@@ -140,36 +109,3 @@
 		)
 	)
 )
-
-(defn handle-tldr [request]
-	(let [
-		article (get-in request [:body :item :message :message])
-		]
-		(let [options {:form-params {:sm_api_input article }}
-      		{:keys [status body error]} @(http/post "http://api.smmry.com/?SM_API_KEY=2573B09504&SM_KEYWORD_COUNT=4" options)]
-		  (if error
-		    (structure-error-response error)
-		    (arrange-tldr (json/read-str body))	
-		  )
-		)
-	)
-)
-
-
-(defroutes app-routes
-  (GET "/PING" [] "PONG")
-  (POST "/" request 
-  	(handle-hipchat-message request)
-  )	
-  (POST "/tldr" request
-  	(handle-tldr request)
-  	)
-  (route/not-found "Not Found"))
-
-(def app
-  (-> (handler/api app-routes)
-   	  (wrap-json-body {:keywords? true})
-      (wrap-json-response)))
-
-(defn -main [] 
-	jetty/run-jetty app)
