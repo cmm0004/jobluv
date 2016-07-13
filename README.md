@@ -5,13 +5,21 @@ A rewrite of the rather verbose ruby version. found here:
 https://github.com/cmm0004/StockChecker/blob/master/lib/endpoints/jobluv.rb
 
 ## Usage
+
+Add to a users keys
 /jobluv @UserMentionName ++
 
+Subtract from a users keys
 /jobluv @UserMentionName --
 
-in progress, counting keys:
-
+Count # of keys
 /jobluv @userMentionName ?
+
+## BETA
+
+returns a 7 sentence TL;DR (powered by smmry.com)
+/tldr <long email>
+
 
 ## Prerequisites
 
@@ -31,7 +39,5 @@ To start a local web server for the application, run:
     or
     lein ring server-headless
 
-
-Doesnt have exception handling or db integration like the ruby version though. soon.
 
 
