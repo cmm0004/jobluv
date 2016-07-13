@@ -22,7 +22,7 @@ Count # of keys
 
 returns a 7 sentence TL;DR (powered by smmry.com)
 
-/tldr <long email>
+/tldr \<long email\>
 
 
 ## Prerequisites
