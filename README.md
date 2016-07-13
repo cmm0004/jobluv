@@ -7,17 +7,21 @@ https://github.com/cmm0004/StockChecker/blob/master/lib/endpoints/jobluv.rb
 ## Usage
 
 Add to a users keys
+
 /jobluv @UserMentionName ++
 
 Subtract from a users keys
+
 /jobluv @UserMentionName --
 
 Count # of keys
+
 /jobluv @userMentionName ?
 
 ## BETA
 
 returns a 7 sentence TL;DR (powered by smmry.com)
+
 /tldr <long email>
 
 
